@@ -9,7 +9,6 @@ import Testimonials from "../components/Testimonials"
 function Home() {
   return (
     <div>
-    <Navbar/>
     <Herosection/>
     <Categories/>
     <FeaturedProducts/>

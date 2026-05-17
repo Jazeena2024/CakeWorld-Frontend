@@ -1,5 +1,7 @@
 import { useState } from 'react';
+import axios from 'axios';
 import { Eye, EyeOff, Lock, Mail, User } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 export default function Register() {
   const [name, setName] = useState('');
@@ -7,13 +9,49 @@ export default function Register() {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const nav =useNavigate();
 
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    if (password !== confirmPassword) {
+      alert("Passwords do not match");
+      return;
+    }
+
+    try {
+      setLoading(true);
+
+      const res = await axios.post("http://localhost:5000/api/auth/register", {
+        name,
+        email,
+        password
+      });
+
+      alert("Registered Successfully ✅");
+      nav("/login")
+      console.log(res.data);
+
+      // Reset form
+      setName('');
+      setEmail('');
+      setPassword('');
+      setConfirmPassword('');
+
+    } catch (err) {
+      console.error(err);
+      alert(err.response?.data?.message || "Registration failed ❌");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-600 via-purple-600 to-pink-600">
       
       <div className="w-full max-w-md bg-white rounded-2xl shadow-2xl p-8">
-        
+
         {/* Header */}
         <div className="text-center mb-6">
           <div className="w-16 h-16 mx-auto flex items-center justify-center bg-gradient-to-br from-blue-600 to-purple-600 rounded-xl mb-4">
@@ -26,11 +64,11 @@ export default function Register() {
         </div>
 
         {/* Form */}
-        <form  className="space-y-5">
-          
+        <form onSubmit={handleSubmit} className="space-y-5">
+
           {/* Name */}
           <div>
-            <label className="text-sm">Full Name</label>
+            <label className="text-sm font-medium">Full Name</label>
             <div className="relative mt-1">
               <User className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
               <input
@@ -46,7 +84,7 @@ export default function Register() {
 
           {/* Email */}
           <div>
-            <label className="text-sm">Email</label>
+            <label className="text-sm font-medium">Email</label>
             <div className="relative mt-1">
               <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
               <input
@@ -62,7 +100,7 @@ export default function Register() {
 
           {/* Password */}
           <div>
-            <label className="text-sm">Password</label>
+            <label className="text-sm font-medium">Password</label>
             <div className="relative mt-1">
               <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
               <input
@@ -85,7 +123,7 @@ export default function Register() {
 
           {/* Confirm Password */}
           <div>
-            <label className="text-sm">Confirm Password</label>
+            <label className="text-sm font-medium">Confirm Password</label>
             <div className="relative mt-1">
               <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
               <input
@@ -99,9 +137,13 @@ export default function Register() {
             </div>
           </div>
 
-          {/* Register Button */}
-          <button className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-2 rounded-lg hover:opacity-90">
-            Register
+          {/* Button */}
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-2 rounded-lg hover:opacity-90 disabled:opacity-50"
+          >
+            {loading ? "Registering..." : "Register"}
           </button>
         </form>
 
@@ -110,7 +152,7 @@ export default function Register() {
           OR
         </div>
 
-        {/* Social Buttons */}
+        {/* Social */}
         <div className="grid grid-cols-2 gap-3">
           <button className="border p-2 rounded-lg hover:bg-gray-100">
             Google
@@ -120,11 +162,12 @@ export default function Register() {
           </button>
         </div>
 
-        {/* Login Link */}
+        {/* Login */}
         <p className="text-center text-sm mt-6">
           Already have an account?{' '}
-          <span className="text-blue-600 cursor-pointer">Login</span>
+          <span onClick={()=>nav('/login')} className="text-blue-600 cursor-pointer">Login</span>
         </p>
+
       </div>
     </div>
   );

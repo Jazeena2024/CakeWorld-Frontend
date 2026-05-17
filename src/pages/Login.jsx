@@ -1,15 +1,50 @@
 import { useState } from 'react';
 import { Eye, EyeOff, Lock, Mail } from 'lucide-react';
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const nav = useNavigate();
 
-//   const handleSubmit = (e: React.FormEvent) => {
-//     e.preventDefault();
-//     console.log({ email, password });
-//   };
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    // Basic validation
+    if (!email || !password) {
+      alert("Please fill all fields");
+      return;
+    }
+
+    try {
+      setLoading(true);
+
+      const res = await axios.post(
+        'http://localhost:5000/api/auth/login',
+        { email, password }
+      );
+
+      console.log("Login Success:", res.data);
+
+      // Store token
+      localStorage.setItem("token", res.data.token);
+
+      alert("Login Successful ✅");
+      nav('/')
+
+      // Optional: redirect
+      // window.location.href = "/dashboard";
+
+    } catch (err) {
+      console.log("Login Error:", err.response?.data || err.message);
+      alert(err.response?.data?.message || "Login failed ❌");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-600 via-purple-600 to-pink-600">
@@ -28,11 +63,11 @@ export default function Login() {
         </div>
 
         {/* Form */}
-        <form className="space-y-5">
+        <form className="space-y-5" onSubmit={handleSubmit}>
           
           {/* Email */}
           <div>
-            <label className="text-sm">Email</label>
+            <label className="text-sm font-medium">Email</label>
             <div className="relative mt-1">
               <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
               <input
@@ -47,7 +82,7 @@ export default function Login() {
 
           {/* Password */}
           <div>
-            <label className="text-sm">Password</label>
+            <label className="text-sm font-medium">Password</label>
             <div className="relative mt-1">
               <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
               <input
@@ -69,14 +104,18 @@ export default function Login() {
 
           {/* Forgot Password */}
           <div className="text-right text-sm">
-            <button className="text-blue-600 hover:underline">
+            <button type="button" className="text-blue-600 hover:underline">
               Forgot password?
             </button>
           </div>
 
           {/* Login Button */}
-          <button className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-2 rounded-lg hover:opacity-90">
-            Sign In
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-2 rounded-lg hover:opacity-90 disabled:opacity-50"
+          >
+            {loading ? "Signing in..." : "Sign In"}
           </button>
         </form>
 
@@ -98,8 +137,11 @@ export default function Login() {
         {/* Signup */}
         <p className="text-center text-sm mt-6">
           Don’t have an account?{' '}
-          <span className="text-blue-600 cursor-pointer">Sign up</span>
+          <span onClick={()=>nav('/register')} className="text-blue-600 cursor-pointer">
+            Sign up
+          </span>
         </p>
+
       </div>
     </div>
   );

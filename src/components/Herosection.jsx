@@ -1,7 +1,9 @@
 import React from 'react'
 import { ArrowRight } from 'lucide-react'
+import { useNavigate } from 'react-router-dom'
 
 function Herosection() {
+  const nav = useNavigate()
   return (
     <div>
       <section className="relative h-[600px] md:h-[700px] overflow-hidden">
@@ -34,12 +36,16 @@ function Herosection() {
               style={{ animationDelay: '0.2s' }}
             >
               
-              <button className="px-8 py-4 bg-terracotta hover:bg-terracotta/90 text-white rounded-full font-medium shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 flex items-center gap-2 group">
+              <button className="px-8 py-4 bg-terracotta hover:bg-terracotta/90 text-white rounded-full font-medium shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 flex items-center gap-2 group"
+                onClick={()=>nav('/shop')}
+              >
                 Shop Now
                 <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform duration-300" />
               </button>
 
-              <button className="px-8 py-4 bg-white/20 backdrop-blur-md hover:bg-white/30 text-white rounded-full font-medium border-2 border-white/50 transition-all duration-300 hover:scale-105">
+              <button className="px-8 py-4 bg-white/20 backdrop-blur-md hover:bg-white/30 text-white rounded-full font-medium border-2 border-white/50 transition-all duration-300 hover:scale-105"
+                onClick={()=>nav('/explore')}
+              >
                 Explore Cakes
               </button>
 
