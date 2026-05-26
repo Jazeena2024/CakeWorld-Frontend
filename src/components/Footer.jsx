@@ -1,9 +1,11 @@
 import React from 'react'
 import { ChefHat, MapPin, Phone, Mail } from 'lucide-react'
 import { FaFacebookF, FaInstagram, FaTwitter } from 'react-icons/fa'
+import { useNavigate } from 'react-router-dom'
 
 function Footer() {
   const year = new Date().getFullYear()
+  const nav= useNavigate()
 
   return (
     <footer className="bg-black text-white p-10">
@@ -28,11 +30,11 @@ function Footer() {
           <div>
             <h4 className="text-lg font-bold mb-4">Quick Links</h4>
             <ul className="space-y-2">
-              <li><a href="#home" className="text-white/70 hover:text-terracotta transition-colors duration-300">Home</a></li>
-              <li><a href="#shop" className="text-white/70 hover:text-terracotta transition-colors duration-300">Shop</a></li>
-              <li><a href="#about" className="text-white/70 hover:text-terracotta transition-colors duration-300">About Us</a></li>
-              <li><a href="#contact" className="text-white/70 hover:text-terracotta transition-colors duration-300">Contact</a></li>
-              <li><a href="#faq" className="text-white/70 hover:text-terracotta transition-colors duration-300">FAQ</a></li>
+              <li onClick={()=>nav('/')}><a href="" className="text-white/70 hover:text-terracotta transition-colors duration-300">Home</a></li>
+              <li onClick={()=>nav('/shop')}><a href="#shop" className="text-white/70 hover:text-terracotta transition-colors duration-300">Shop</a></li>
+              <li onClick={()=>nav('/about')}><a href="#about" className="text-white/70 hover:text-terracotta transition-colors duration-300">About Us</a></li>
+              <li onClick={()=>nav('/contact')}><a href="#contact" className="text-white/70 hover:text-terracotta transition-colors duration-300">Contact</a></li>
+              {/* <li><a href="#faq" className="text-white/70 hover:text-terracotta transition-colors duration-300">FAQ</a></li> */}
             </ul>
           </div>
 

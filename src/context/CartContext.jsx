@@ -1,21 +1,57 @@
-import { createContext, useState } from "react";
+import {
+  createContext,
+  useState
+} from "react";
+
+import {
+  useNavigate
+} from "react-router-dom";
+
+import { toast }
+  from "react-toastify";
 
 export const CartContext =
   createContext();
 
-const CartProvider = ({ children }) => {
+const CartProvider = ({
+  children
+}) => {
 
   const [cartItems, setCartItems] =
     useState([]);
 
+  const navigate = useNavigate();
+
+  // =========================
   // ADD TO CART
+  // =========================
+
   const addToCart = (product) => {
 
-    const existing =
-      cartItems.find(
-        (item) => item._id === product._id
+    // CHECK LOGIN
+    const token =
+      localStorage.getItem("token");
+
+    if (!token) {
+
+      toast.warning(
+        "Please login first"
       );
 
+      navigate("/login");
+
+      return;
+
+    }
+
+    // CHECK EXISTING PRODUCT
+    const existing =
+      cartItems.find(
+        (item) =>
+          item._id === product._id
+      );
+
+    // IF PRODUCT EXISTS
     if (existing) {
 
       setCartItems(
@@ -23,13 +59,21 @@ const CartProvider = ({ children }) => {
           item._id === product._id
             ? {
                 ...item,
-                quantity: item.quantity + 1
+                quantity:
+                  item.quantity + 1
               }
             : item
         )
       );
 
-    } else {
+      toast.success(
+        "Quantity updated 🛒"
+      );
+
+    }
+
+    // NEW PRODUCT
+    else {
 
       setCartItems([
         ...cartItems,
@@ -39,17 +83,29 @@ const CartProvider = ({ children }) => {
         }
       ]);
 
+      toast.success(
+        "Added to cart 🛍️"
+      );
+
     }
 
   };
 
-  // REMOVE
+  // =========================
+  // REMOVE FROM CART
+  // =========================
+
   const removeFromCart = (id) => {
 
     setCartItems(
       cartItems.filter(
-        (item) => item._id !== id
+        (item) =>
+          item._id !== id
       )
+    );
+
+    toast.info(
+      "Removed from cart ❌"
     );
 
   };

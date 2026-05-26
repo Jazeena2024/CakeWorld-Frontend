@@ -13,10 +13,14 @@ const ProductForm = ({
     name: "",
     price: "",
     description: "",
-    image: ""
+    image: "",
+    video: ""
   });
 
   const [preview, setPreview] = useState(null);
+
+  const [videoPreview, setVideoPreview] =
+    useState(null);
 
   // ✅ Prefill edit data
   useEffect(() => {
@@ -27,10 +31,15 @@ const ProductForm = ({
         name: selectedProduct.name,
         price: selectedProduct.price,
         description: selectedProduct.description,
-        image: selectedProduct.image
+        image: selectedProduct.image,
+        video: selectedProduct.video || ""
       });
 
       setPreview(selectedProduct.image);
+
+      setVideoPreview(
+        selectedProduct.video || null
+      );
 
     }
 
@@ -67,70 +76,158 @@ const ProductForm = ({
 
   };
 
-  const handleChange = async (e) => {
+  // ✅ Upload video to Cloudinary
+  const handleVideoUpload = async (file) => {
 
-  const { name, value, files } = e.target;
+    const data = new FormData();
 
-  // IMAGE
-  if (name === "image") {
+    data.append("file", file);
 
-    const file = files[0];
-
-    if (!file) return;
-
-    // Preview
-    setPreview(URL.createObjectURL(file));
+    data.append(
+      "upload_preset",
+      "cake_ecom"
+    );
 
     try {
 
-      // Upload image
-      const imageUrl =
-        await handleImageUpload(file);
+      const response = await axios.post(
+        "https://api.cloudinary.com/v1_1/dgn5igfzl/video/upload",
+        data
+      );
 
-      if (!imageUrl) {
-        return toast.error("Upload failed");
-      }
-
-      // ✅ Functional update
-      setForm((prev) => ({
-        ...prev,
-        image: imageUrl
-      }));
-
-      toast.success("Image uploaded ✅");
+      return response.data.secure_url;
 
     } catch (error) {
 
       console.log(error);
 
-      toast.error("Image upload failed");
+      toast.error("Video upload failed");
 
     }
 
-  } else {
+  };
 
-    // NORMAL INPUTS
-    setForm((prev) => ({
-      ...prev,
-      [name]: value
-    }));
+  const handleChange = async (e) => {
 
-  }
+    const { name, value, files } = e.target;
 
-};
+    // ✅ IMAGE
+    if (name === "image") {
+
+      const file = files[0];
+
+      if (!file) return;
+
+      // Preview
+      setPreview(URL.createObjectURL(file));
+
+      try {
+
+        const imageUrl =
+          await handleImageUpload(file);
+
+        if (!imageUrl) {
+
+          return toast.error(
+            "Image upload failed"
+          );
+
+        }
+
+        setForm((prev) => ({
+          ...prev,
+          image: imageUrl
+        }));
+
+        toast.success("Image uploaded ✅");
+
+      } catch (error) {
+
+        console.log(error);
+
+        toast.error("Image upload failed");
+
+      }
+
+    }
+
+    // ✅ VIDEO
+    else if (name === "video") {
+
+      const file = files[0];
+
+      if (!file) return;
+
+      // Preview
+      setVideoPreview(
+        URL.createObjectURL(file)
+      );
+
+      try {
+
+        const videoUrl =
+          await handleVideoUpload(file);
+
+        if (!videoUrl) {
+
+          return toast.error(
+            "Video upload failed"
+          );
+
+        }
+
+        setForm((prev) => ({
+          ...prev,
+          video: videoUrl
+        }));
+
+        toast.success("Video uploaded 🎥");
+
+      } catch (error) {
+
+        console.log(error);
+
+        toast.error("Video upload failed");
+
+      }
+
+    }
+
+    // ✅ NORMAL INPUTS
+    else {
+
+      setForm((prev) => ({
+        ...prev,
+        [name]: value
+      }));
+
+    }
+
+  };
 
   const handleSubmit = async (e) => {
 
     e.preventDefault();
 
     if (!form.name || !form.price) {
-      return toast.error("Name & Price required");
+
+      return toast.error(
+        "Name & Price required"
+      );
+
     }
+
     if (!form.image) {
-  return toast.error("Please upload image");
-}
+
+      return toast.error(
+        "Please upload image"
+      );
+
+    }
+
     try {
 
+      // ✅ UPDATE
       if (selectedProduct) {
 
         await API.put(
@@ -144,11 +241,16 @@ const ProductForm = ({
           }
         );
 
-        toast.success("Product updated ✏️");
+        toast.success(
+          "Product updated ✏️"
+        );
 
         setSelectedProduct(null);
 
-      } else {
+      }
+
+      // ✅ ADD
+      else {
 
         await API.post(
           "/products",
@@ -161,20 +263,26 @@ const ProductForm = ({
           }
         );
 
-        toast.success("Product added ✅");
+        toast.success(
+          "Product added ✅"
+        );
 
       }
 
       fetchProducts();
 
+      // ✅ RESET
       setForm({
         name: "",
         price: "",
         description: "",
-        image: ""
+        image: "",
+        video: ""
       });
 
       setPreview(null);
+
+      setVideoPreview(null);
 
     } catch {
 
@@ -191,6 +299,7 @@ const ProductForm = ({
       className="space-y-4"
     >
 
+      {/* PRODUCT NAME */}
       <input
         name="name"
         value={form.name}
@@ -199,6 +308,7 @@ const ProductForm = ({
         className="w-full border p-2 rounded-lg"
       />
 
+      {/* PRICE */}
       <input
         name="price"
         value={form.price}
@@ -207,6 +317,7 @@ const ProductForm = ({
         className="w-full border p-2 rounded-lg"
       />
 
+      {/* DESCRIPTION */}
       <textarea
         name="description"
         value={form.description}
@@ -215,14 +326,17 @@ const ProductForm = ({
         className="w-full border p-2 rounded-lg"
       />
 
+      {/* IMAGE INPUT */}
+      <p>Upload image</p>
       <input
         type="file"
         name="image"
+        accept="image/*"
         onChange={handleChange}
         className="w-full"
       />
 
-      {/* Preview */}
+      {/* IMAGE PREVIEW */}
       {
         preview &&
         <img
@@ -232,7 +346,37 @@ const ProductForm = ({
         />
       }
 
-      <button className="w-full bg-indigo-600 text-white py-2 rounded-lg hover:bg-indigo-700">
+      {/* VIDEO INPUT */}
+      <p>Upload video</p>
+      <input
+        type="file"
+        name="video"
+        accept="video/*"
+        onChange={handleChange}
+        className="w-full"
+      />
+
+      {/* VIDEO PREVIEW */}
+      {
+        videoPreview &&
+        <video
+          src={videoPreview}
+          controls
+          className="h-40 rounded-lg"
+        />
+      }
+
+      {/* BUTTON */}
+      <button
+        className="
+          w-full
+          bg-indigo-600
+          text-white
+          py-2
+          rounded-lg
+          hover:bg-indigo-700
+        "
+      >
 
         {
           selectedProduct
@@ -245,6 +389,7 @@ const ProductForm = ({
     </form>
 
   );
+
 };
 
 export default ProductForm;

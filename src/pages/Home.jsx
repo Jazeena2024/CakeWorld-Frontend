@@ -9,9 +9,9 @@ import Testimonials from "../components/Testimonials"
 function Home() {
   return (
     <div>
-    <Herosection/>
-    <Categories/>
-    <FeaturedProducts/>
+    <Herosection id="h1"/>
+    <Categories id="c1"/>
+    <FeaturedProducts />
     <Testimonials/>
     <Footer/>
   

@@ -1,7 +1,13 @@
-import React from 'react'
+import React, { useState } from 'react'
+
 import { Star } from 'lucide-react'
 
+import { toast } from 'react-toastify'
+
 function Testimonials() {
+
+  const [email, setEmail] =
+    useState("")
 
   const testimonials = [
     {
@@ -26,6 +32,28 @@ function Testimonials() {
       image: "https://randomuser.me/api/portraits/women/68.jpg"
     }
   ]
+
+  // =========================
+  // SUBSCRIBE
+  // =========================
+
+  const handleSubscribe = () => {
+
+    if (!email.trim()) {
+
+      return toast.error(
+        "Please enter your email"
+      )
+
+    }
+
+    toast.success(
+      "Your subscription added successfully 🎉"
+    )
+
+    setEmail("")
+
+  }
 
   return (
 
@@ -159,10 +187,17 @@ function Testimonials() {
             <input
               type="email"
               placeholder="Enter your email"
+              value={email}
+              onChange={(e) =>
+                setEmail(e.target.value)
+              }
               className="flex-1 px-6 py-4 rounded-full bg-white/90 backdrop-blur-md border border-white shadow-md focus:border-terracotta focus:ring-4 focus:ring-terracotta/20 outline-none transition-all duration-300"
             />
 
-            <button className="px-8 py-4 bg-pink-500 hover:bg-terracotta/90 text-white rounded-full font-semibold shadow-lg hover:shadow-2xl hover:scale-105 transition-all duration-300 whitespace-nowrap">
+            <button
+              onClick={handleSubscribe}
+              className="px-8 py-4 bg-pink-500 hover:bg-terracotta/90 text-white rounded-full font-semibold shadow-lg hover:shadow-2xl hover:scale-105 transition-all duration-300 whitespace-nowrap"
+            >
 
               Subscribe Now
 
