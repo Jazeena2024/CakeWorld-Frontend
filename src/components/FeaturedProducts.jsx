@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { Heart, Star } from 'lucide-react'
-import axios from 'axios'
+import API from '../services/api'
 import { CartContext } from '../context/CartContext'
 import { useContext } from 'react'
 
@@ -21,8 +21,8 @@ function FeaturedProducts() {
 
     try {
 
-      const response = await axios.get(
-        "http://localhost:5000/api/products"
+      const response = await API.get(
+        "/products"
       )
 
       // ✅ Show only first 3 products

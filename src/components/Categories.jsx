@@ -4,7 +4,7 @@ import React, {
   useContext
 } from "react";
 
-import axios from "axios";
+import API from "../services/api";
 
 import { CartContext }
   from "../context/CartContext";
@@ -39,8 +39,8 @@ function Categories() {
 
     try {
 
-      const response = await axios.get(
-        "http://localhost:5000/api/products"
+      const response = await API.get(
+        "/products"
       );
 
       setCategories(response.data);

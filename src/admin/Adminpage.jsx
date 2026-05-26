@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import API from "../services/api";
 
 const Admin = () => {
   const [products, setProducts] = useState([]);
@@ -14,9 +15,8 @@ const Admin = () => {
 
   // Fetch products
   const fetchProducts = async () => {
-    const res = await fetch("http://localhost:5000/api/products");
-    const data = await res.json();
-    setProducts(data);
+    const res = await API.get("/products");
+    setProducts(res.data);
   };
 
   useEffect(() => {
@@ -33,17 +33,9 @@ const Admin = () => {
     e.preventDefault();
 
     if (editId) {
-      await fetch(`http://localhost:5000/api/products/${editId}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form)
-      });
+      await API.put(`/products/${editId}`, form);
     } else {
-      await fetch("http://localhost:5000/api/products", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form)
-      });
+      await API.post("/products", form);
     }
 
     setForm({ name: "", price: "", category: "", image: "", description: "" });
@@ -53,9 +45,7 @@ const Admin = () => {
 
   // Delete
   const handleDelete = async (id) => {
-    await fetch(`http://localhost:5000/api/products/${id}`, {
-      method: "DELETE"
-    });
+    await API.delete(`/products/${id}`);
     fetchProducts();
   };
 

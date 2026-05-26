@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import API from "../services/api";
 import { useNavigate, useSearchParams } from "react-router-dom";
 
 function SearchPage() {
@@ -22,8 +22,8 @@ function SearchPage() {
 
     try {
 
-      const response = await axios.get(
-        `http://localhost:5000/api/products/search?q=${query}`
+      const response = await API.get(
+        `/products/search?q=${query}`
       );
 
       setProducts(response.data);

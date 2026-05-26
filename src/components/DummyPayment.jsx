@@ -1,6 +1,6 @@
 import React from "react";
 
-import axios from "axios";
+import API from "../services/api";
 
 function DummyPayment({ amount }) {
 
@@ -8,8 +8,8 @@ function DummyPayment({ amount }) {
 
     try {
 
-      const response = await axios.post(
-        "http://localhost:5000/api/payment/checkout",
+      const response = await API.post(
+        "/payment/checkout",
         {
           amount
         }
