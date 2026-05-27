@@ -54,13 +54,13 @@ const ProductForm = ({
 
     data.append(
       "upload_preset",
-      "cake_ecom"
+      "Cake_World"
     );
 
     try {
 
       const response = await axios.post(
-        "https://api.cloudinary.com/v1_1/dgn5igfzl/image/upload",
+        "https://api.cloudinary.com/v1_1/ddspavmln/image/upload",
         data
       );
 
@@ -85,13 +85,13 @@ const ProductForm = ({
 
     data.append(
       "upload_preset",
-      "cake_ecom"
+      "Cake_World"
     );
 
     try {
 
       const response = await axios.post(
-        "https://api.cloudinary.com/v1_1/dgn5igfzl/video/upload",
+        "https://api.cloudinary.com/v1_1/ddspavmln/video/upload",
         data
       );
 
